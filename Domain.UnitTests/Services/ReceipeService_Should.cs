@@ -51,8 +51,7 @@ namespace Domain.UnitTests.Services
             //Setup defines what is going to happen when the method will be called
             receipesRepositoryMock
                 .Setup(receipesRepository => receipesRepository
-                //.GetAll(It.IsAny<RecipesFilter>()))
-                .GetAll(requestFilter))
+                .GetAll(It.IsAny<RecipesFilter>()))
                 .ReturnsAsync(getReceipesResponse);
 
 

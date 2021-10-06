@@ -15,7 +15,12 @@
       "ProjectGuid": "23be39c5-2bee-4a3b-a4a2-4241dbab0b88",
       "DisplayName": "Persistence",
       "ColorIndex": 2
+    },
+    "9a6730e3-ec6f-4824-9ee9-3ab540ffe24b": {
+      "ProjectGuid": "9a6730e3-ec6f-4824-9ee9-3ab540ffe24b",
+      "DisplayName": "Contracts",
+      "ColorIndex": 3
     }
   },
-  "NextColorIndex": 3
+  "NextColorIndex": 4
 }
