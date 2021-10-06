@@ -34,7 +34,7 @@ namespace Domain.UnitTests.Services
             var receipesRepositoryMock = new Mock<IRecipesRepository>();
             var descriptionsRepositoryMock = new Mock<IDescriptionsRepository>();
 
-            // expected input - data that would be provided to the tested method
+            // expected input - data that would be provided to the tested method.
             var orderBy = Guid.NewGuid().ToString();
             var orderHow = Guid.NewGuid().ToString();
 
