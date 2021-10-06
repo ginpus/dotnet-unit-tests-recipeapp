@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.Extensions;
 using Domain.Models;
 using Persistence.Filters;
 using Persistence.Models.WriteModels;
@@ -19,23 +20,11 @@ namespace Domain.Services
             _descriptionsRepository = descriptionsRepository;
         }
 
-        public async Task<IEnumerable<Recipe>> GetAllAsync(string orderBy, string orderHow)
+        public async Task<IEnumerable<Recipe>> GetAllAsync(RecipesFilter recipesFilter)
         {
-            var recipes = await _recipesRepository.GetAll(new RecipesFilter
-            {
-                OrderBy = orderBy,
-                OrderHow = orderHow
-            });
+            var recipes = await _recipesRepository.GetAll(recipesFilter);
 
-            return recipes.Select(recipe => new Recipe
-            {
-                Id = recipe.Id,
-                Name = recipe.Name,
-                Description = recipe.Description,
-                Difficulty = recipe.Difficulty,
-                TimeToComplete = recipe.TimeToComplete,
-                DateCreated = recipe.DateCreated
-            });
+            return recipes.Select(recipe => recipe.MapToRecipe());
         }
 
         public async Task<int> CreateAsync(Recipe model)

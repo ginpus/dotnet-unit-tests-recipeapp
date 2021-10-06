@@ -37,25 +37,29 @@ namespace RecipeApp
 
                 switch (chosenCommand)
                 {
-                    case "1": 
-                        
+                    case "1":
+
                         Console.WriteLine("Enter order by TimeToComplete or DateCreated: ");
                         var orderBy = Console.ReadLine();
                         Console.WriteLine("Enter ASC or DESC: ");
                         var orderHow = Console.ReadLine();
 
-                        var recipes = await _recipeService.GetAllAsync(orderBy, orderHow);
-                        
+                        var recipes = await _recipeService.GetAllAsync(new Persistence.Filters.RecipesFilter
+                        {
+                            OrderBy = orderBy,
+                            OrderHow = orderHow
+                        });
+
                         foreach (var recipe in recipes)
                         {
                             Console.WriteLine(recipe);
                         }
-                        
+
                         break;
                     case "2":
                         Console.WriteLine("Enter recipe Id:");
                         id = Convert.ToInt32(Console.ReadLine());
-                        
+
                         Console.WriteLine("Enter recipe Name:");
                         name = Console.ReadLine();
 
@@ -77,7 +81,7 @@ namespace RecipeApp
                             TimeToComplete = TimeSpan.FromMinutes(minutes),
                             DateCreated = DateTime.Now
                         });
-                        
+
                         break;
                     case "3":
                         Console.WriteLine("Enter recipe ID");
@@ -98,7 +102,7 @@ namespace RecipeApp
                     case "5":
                         var deletedRecipesCount = await _recipeService.DeleteAllAsync();
                         Console.WriteLine($"{deletedRecipesCount} recipes were deleted");
-                        
+
                         break;
                     case "6":
                         return;

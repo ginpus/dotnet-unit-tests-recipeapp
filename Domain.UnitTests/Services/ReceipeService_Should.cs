@@ -77,7 +77,7 @@ namespace Domain.UnitTests.Services
 
             //Act - we call the method we want to test
 
-            var result = (await sut.GetAllAsync(requestFilter.OrderBy, requestFilter.OrderHow))
+            var result = (await sut.GetAllAsync(requestFilter))
                 .ToList();
 
             //Assert - did the required methods were called, did the intended data were returned
@@ -139,62 +139,36 @@ namespace Domain.UnitTests.Services
                 DateCreated = DateTime.Now
             };
 
-            var newRecipeMain = new RecipeWriteModel
-            {
-                Id = newRecipe.Id,
-                Name = newRecipe.Name,
-                Difficulty = newRecipe.Difficulty,
-                TimeToComplete = newRecipe.TimeToComplete,
-                DateCreated = newRecipe.DateCreated
-            };
-
-            var newRecipeDescription = new DescriptionWriteModel
-            {
-                RecipeId = newRecipe.Id,
-                Description = newRecipe.Description
-            };
-
-            //expected output from receipesRepository
-            //var recipeRowsAffected = 1;
-
-            //expected output from descriptionsRepository
-            //var descriptionRowsAffected = 1;
-
             //Setup defines what is going to happen when the method will be called
-            receipesRepositoryMock
-                .Setup(recipesRepository => recipesRepository
-                .SaveAsync(newRecipeMain))
-                .ReturnsAsync(It.IsAny<int>());
-
-            descriptionsRepositoryMock
-                .Setup(descriptionsRepository => descriptionsRepository
-                .SaveAsync(newRecipeDescription))
-                .ReturnsAsync(It.IsAny<int>());
-
-            var expectedResult = It.IsAny<int>();
 
             //sut - system under test
             var sut = new RecipeService(receipesRepositoryMock.Object, descriptionsRepositoryMock.Object);
 
             //Act - we call the method we want to test
 
-            var result = await sut.CreateAsync(newRecipe);
+            await sut.CreateAsync(newRecipe);
 
             //Assert - did the required methods were called, did the intended data were returned
 
-            Assert.Equal(expectedResult, result);
 
             receipesRepositoryMock
                 .Verify(recipesRepository => recipesRepository
-                .SaveAsync(It.Is<RecipeWriteModel>(value => value.Id.Equals(newRecipeMain.Id) && value.Name.Equals(newRecipeMain.Name) && value.Difficulty.Equals(newRecipeMain.Difficulty) && value.DateCreated.Equals(newRecipeMain.DateCreated) && value.TimeToComplete.Equals(newRecipeMain.TimeToComplete))), Times.Once);
+                .SaveAsync(It.Is<RecipeWriteModel>(value => value.Id.Equals(newRecipe.Id) && value.Name.Equals(newRecipe.Name) && value.Difficulty.Equals(newRecipe.Difficulty) && value.DateCreated.Equals(newRecipe.DateCreated) && value.TimeToComplete.Equals(newRecipe.TimeToComplete))), Times.Once);
 
             descriptionsRepositoryMock
                 .Verify(descriptionsRepository => descriptionsRepository
-                .SaveAsync(It.Is<DescriptionWriteModel>(value => value.RecipeId.Equals(newRecipeDescription.RecipeId) && value.Description.Equals(newRecipeDescription.Description))), Times.Once);
+                .SaveAsync(It.Is<DescriptionWriteModel>(value => value.RecipeId.Equals(newRecipe.Id) && value.Description.Equals(newRecipe.Description))), Times.Once);
 
         }
 
+        /*        [Theory]
+                [InlineData(45, "Rokas", "Some description")]
+                [InlineData(65, "Bilis", "kikilis")]
+                public async Task EditAsync_WithNewValues_ReturnRowsAffected(int id, string name, string description)*/
+
+
         [Fact]
+
         public async Task EditAsync_WithNewValues_ReturnRowsAffected()
         {
             //Arange - preparation of data, creation of mock data model objects
@@ -207,24 +181,6 @@ namespace Domain.UnitTests.Services
             var newName = Guid.NewGuid().ToString();
             var newDescription = Guid.NewGuid().ToString();
 
-            //expected output from receipesRepository
-            //var recipeRowsAffected = 1;
-
-            //expected output from descriptionsRepository
-            //var descriptionRowsAffected = 1;
-
-            //Setup defines what is going to happen when the method will be called
-            receipesRepositoryMock
-                .Setup(recipesRepository => recipesRepository
-                .EditNameAsync(editedId, newName))
-                .ReturnsAsync(It.IsAny<int>());
-
-            descriptionsRepositoryMock
-                .Setup(descriptionsRepository => descriptionsRepository
-                .EditDescriptionAsync(editedId, newDescription))
-                .ReturnsAsync(It.IsAny<int>());
-
-            var expectedResult = It.IsAny<int>();
 
             //sut - system under test
             var sut = new RecipeService(receipesRepositoryMock.Object, descriptionsRepositoryMock.Object);
@@ -234,8 +190,6 @@ namespace Domain.UnitTests.Services
             var result = await sut.EditAsync(editedId, newName, newDescription);
 
             //Assert - did the required methods were called, did the intended data were returned
-
-            Assert.Equal(expectedResult, result);
 
             receipesRepositoryMock
                 .Verify(recipesRepository => recipesRepository
@@ -258,19 +212,6 @@ namespace Domain.UnitTests.Services
 
             var deletedId = new Random().Next(2, 50);
 
-            //Setup defines what is going to happen when the method will be called
-            receipesRepositoryMock
-                .Setup(recipesRepository => recipesRepository
-                .DeleteByIdAsync(deletedId))
-                .ReturnsAsync(It.IsAny<int>());
-
-            descriptionsRepositoryMock
-                .Setup(descriptionsRepository => descriptionsRepository
-                .DeleteByIdAsync(deletedId))
-                .ReturnsAsync(It.IsAny<int>());
-
-            var expectedResult = It.IsAny<int>();
-
             //sut - system under test
             var sut = new RecipeService(receipesRepositoryMock.Object, descriptionsRepositoryMock.Object);
 
@@ -279,8 +220,6 @@ namespace Domain.UnitTests.Services
             var result = await sut.DeleteByIdAsync(deletedId);
 
             //Assert - did the required methods were called, did the intended data were returned
-
-            Assert.Equal(expectedResult, result);
 
             receipesRepositoryMock
                 .Verify(recipesRepository => recipesRepository
@@ -304,17 +243,6 @@ namespace Domain.UnitTests.Services
             var deletedId = new Random().Next(2, 1023);
 
             //Setup defines what is going to happen when the method will be called
-            receipesRepositoryMock
-                .Setup(recipesRepository => recipesRepository
-                .DeleteAllAsync())
-                .ReturnsAsync(It.IsAny<int>());
-
-            descriptionsRepositoryMock
-                .Setup(descriptionsRepository => descriptionsRepository
-                .DeleteAllAsync())
-                .ReturnsAsync(It.IsAny<int>());
-
-            var expectedResult = It.IsAny<int>();
 
             //sut - system under test
             var sut = new RecipeService(receipesRepositoryMock.Object, descriptionsRepositoryMock.Object);
@@ -324,8 +252,6 @@ namespace Domain.UnitTests.Services
             var result = await sut.DeleteAllAsync();
 
             //Assert - did the required methods were called, did the intended data were returned
-
-            Assert.Equal(expectedResult, result);
 
             receipesRepositoryMock
                 .Verify(recipesRepository => recipesRepository

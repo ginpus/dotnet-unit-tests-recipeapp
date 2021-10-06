@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.Models;
+using Persistence.Filters;
 
 namespace Domain.Services
 {
     public interface IRecipeService
     {
-        Task<IEnumerable<Recipe>> GetAllAsync(string orderBy, string orderHow);
+        Task<IEnumerable<Recipe>> GetAllAsync(RecipesFilter recipesFilter);
 
         Task<int> CreateAsync(Recipe model);
 
