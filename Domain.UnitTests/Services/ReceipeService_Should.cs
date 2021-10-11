@@ -1,4 +1,5 @@
-﻿using Contracts.Enums;
+﻿using AutoFixture.Xunit2;
+using Contracts.Enums;
 using Domain.Models;
 using Domain.Services;
 using Moq;
@@ -14,20 +15,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using TestHelpers.Attributes;
+using FluentAssertions;
 
 namespace Domain.UnitTests.Services
 {
     public class ReceipeService_Should
     {
-        private readonly Random _random;
+        /*        private readonly Random _random;
 
-        public ReceipeService_Should()
-        {
-            _random = new Random();
-        }
+                public ReceipeService_Should()
+                {
+                    _random = new Random();
+                }*/
 
-        //Given_When_Then
-        [Fact]
+        //-----------------START OF LONG VERSION----------------------------
+        /*[Fact]
         public async Task GetAllAsync_WithOrderByAndOrderHow_ReturnReceipes()
         {
             //Arange - preparation of data, creation of mock data model objects
@@ -96,14 +99,48 @@ namespace Domain.UnitTests.Services
                 .Verify(receipesRepository => receipesRepository
                 .GetAll(It.Is<RecipesFilter>(value => value.OrderBy.Equals(requestFilter.OrderBy) && value.OrderHow.Equals(requestFilter.OrderHow))), Times.Once);
         }
+*/
+        //-----------------END OF LONG VERSION----------------------------
 
-        private List<RecipeReadModel> GenerateReceipes(int numberOfReceipes)
+        //Given_When_Then
+        [Theory, AutoMoqData]
+        public async Task GetAllAsync_WithOrderByAndOrderHow_ReturnReceipes(
+            RecipesFilter requestFilter,
+            List<RecipeReadModel> getReceipesResponse, // creates 3 entires in the list by default
+            [Frozen] Mock<IRecipesRepository> receipesRepositoryMock,
+            RecipeService sut)
         {
-            var recipes = new List<RecipeReadModel>();
+            //Arrange
+            receipesRepositoryMock
+                .Setup(receipesRepository => receipesRepository
+                .GetAll(requestFilter))
+                .ReturnsAsync(getReceipesResponse);
 
-            for (var i = 0; i < numberOfReceipes; i++)
+            //Act - we call the method we want to test
+            var result = (await sut.GetAllAsync(requestFilter))
+                .ToList();
+
+            //Assert - did the required methods were called, did the intended data were returned
+            receipesRepositoryMock
+                .Verify(receipesRepository => receipesRepository
+                .GetAll(requestFilter), Times.Once);
+
+            result.Should().BeEquivalentTo(getReceipesResponse, options => options.ComparingByMembers<Recipe>());
+        }
+
+        //-----------------START OF LONG VERSION----------------------------
+        /*
+            //Given_When_Then
+            [Fact]
+            public async Task CreateAsync_WithReceipe_ReturnRowsAffected()
             {
-                var recipe = new RecipeReadModel
+                //Arange - preparation of data, creation of mock data model objects
+                var receipesRepositoryMock = new Mock<IRecipesRepository>();
+                var descriptionsRepositoryMock = new Mock<IDescriptionsRepository>();
+
+                // expected input - data that would be provided to the tested method
+
+                var newRecipe = new Recipe
                 {
                     Id = _random.Next(2, 50),
                     Name = Guid.NewGuid().ToString(),
@@ -113,63 +150,71 @@ namespace Domain.UnitTests.Services
                     DateCreated = DateTime.Now
                 };
 
-                recipes.Add(recipe);
+                //Setup defines what is going to happen when the method will be called
+
+                //sut - system under test
+                var sut = new RecipeService(receipesRepositoryMock.Object, descriptionsRepositoryMock.Object);
+
+                //Act - we call the method we want to test
+
+                await sut.CreateAsync(newRecipe);
+
+                //Assert - did the required methods were called, did the intended data were returned
+
+
+                receipesRepositoryMock
+                    .Verify(recipesRepository => recipesRepository
+                    .SaveAsync(It.Is<RecipeWriteModel>(value => value.Id.Equals(newRecipe.Id) && value.Name.Equals(newRecipe.Name) && value.Difficulty.Equals(newRecipe.Difficulty) && value.DateCreated.Equals(newRecipe.DateCreated) && value.TimeToComplete.Equals(newRecipe.TimeToComplete))), Times.Once);
+
+                descriptionsRepositoryMock
+                    .Verify(descriptionsRepository => descriptionsRepository
+                    .SaveAsync(It.Is<DescriptionWriteModel>(value => value.RecipeId.Equals(newRecipe.Id) && value.Description.Equals(newRecipe.Description))), Times.Once);
+
             }
 
-            return recipes;
-        }
-
+            */
+        //-----------------END OF LONG VERSION----------------------------
         //Given_When_Then
-        [Fact]
-        public async Task CreateAsync_WithReceipe_ReturnRowsAffected()
+        [Theory, AutoMoqData]
+        public async Task CreateAsync_WithReceipe_ReturnRowsAffected(
+                Recipe newRecipe,
+                [Frozen] Mock<IRecipesRepository> receipesRepositoryMock,
+                [Frozen] Mock<IDescriptionsRepository> descriptionsRepositoryMock,
+                RecipeService sut)
         {
-            //Arange - preparation of data, creation of mock data model objects
-            var receipesRepositoryMock = new Mock<IRecipesRepository>();
-            var descriptionsRepositoryMock = new Mock<IDescriptionsRepository>();
-
-            // expected input - data that would be provided to the tested method
-
-            var newRecipe = new Recipe
-            {
-                Id = _random.Next(2, 50),
-                Name = Guid.NewGuid().ToString(),
-                Description = Guid.NewGuid().ToString(),
-                Difficulty = (Difficulty)_random.Next(1, 3),
-                TimeToComplete = TimeSpan.FromMinutes(_random.Next(1, 240)),
-                DateCreated = DateTime.Now
-            };
-
-            //Setup defines what is going to happen when the method will be called
-
-            //sut - system under test
-            var sut = new RecipeService(receipesRepositoryMock.Object, descriptionsRepositoryMock.Object);
-
             //Act - we call the method we want to test
 
             await sut.CreateAsync(newRecipe);
 
             //Assert - did the required methods were called, did the intended data were returned
 
-
             receipesRepositoryMock
                 .Verify(recipesRepository => recipesRepository
-                .SaveAsync(It.Is<RecipeWriteModel>(value => value.Id.Equals(newRecipe.Id) && value.Name.Equals(newRecipe.Name) && value.Difficulty.Equals(newRecipe.Difficulty) && value.DateCreated.Equals(newRecipe.DateCreated) && value.TimeToComplete.Equals(newRecipe.TimeToComplete))), Times.Once);
+                .SaveAsync(It.Is<RecipeWriteModel>(value =>
+                value.Id.Equals(newRecipe.Id) &&
+                value.Name.Equals(newRecipe.Name) &&
+                value.Difficulty.Equals(newRecipe.Difficulty) &&
+                value.DateCreated.Equals(newRecipe.DateCreated) &&
+                value.TimeToComplete.Equals(newRecipe.TimeToComplete))), Times.Once);
 
             descriptionsRepositoryMock
                 .Verify(descriptionsRepository => descriptionsRepository
-                .SaveAsync(It.Is<DescriptionWriteModel>(value => value.RecipeId.Equals(newRecipe.Id) && value.Description.Equals(newRecipe.Description))), Times.Once);
+                .SaveAsync(It.Is<DescriptionWriteModel>(value =>
+                value.RecipeId.Equals(newRecipe.Id) &&
+                value.Description.Equals(newRecipe.Description))), Times.Once);
 
         }
 
-        /*        [Theory]
-                [InlineData(45, "Rokas", "Some description")]
-                [InlineData(65, "Bilis", "kikilis")]
-                public async Task EditAsync_WithNewValues_ReturnRowsAffected(int id, string name, string description)*/
+        //-----------------START OF LONG VERSION----------------------------
+        /*  [Theory]
+        [InlineData(45, "Rokas", "Some description")]
+        [InlineData(65, "Bilis", "kikilis")]
+        public async Task EditAsync_WithNewValues_ReturnRowsAffected(int id, string name, string description)*//*
 
 
-        [Fact]
+    [Fact]
 
-        public async Task EditAsync_WithNewValues_ReturnRowsAffected()
+            public async Task EditAsync_WithNewValues_ReturnRowsAffected()
         {
             //Arange - preparation of data, creation of mock data model objects
             var receipesRepositoryMock = new Mock<IRecipesRepository>();
@@ -199,8 +244,38 @@ namespace Domain.UnitTests.Services
                 .Verify(descriptionsRepository => descriptionsRepository
                 .EditDescriptionAsync(editedId, newDescription), Times.Once);
 
+        } */
+
+        //-----------------END OF LONG VERSION----------------------------
+        [Theory, AutoMoqData]
+        public async Task EditAsync_WithNewValues_ReturnRowsAffected(
+                int editedId,
+                string newName,
+                string newDescription,
+                [Frozen] Mock<IRecipesRepository> receipesRepositoryMock,
+                [Frozen] Mock<IDescriptionsRepository> descriptionsRepositoryMock,
+                RecipeService sut)
+        {
+            //Arange - preparation of data, creation of mock data model objects
+
+            //Act - we call the method we want to test
+
+            var result = await sut.EditAsync(editedId, newName, newDescription);
+
+            //Assert - did the required methods were called, did the intended data were returned
+
+            receipesRepositoryMock
+                .Verify(recipesRepository => recipesRepository
+                .EditNameAsync(editedId, newName), Times.Once);
+
+            descriptionsRepositoryMock
+                .Verify(descriptionsRepository => descriptionsRepository
+                .EditDescriptionAsync(editedId, newDescription), Times.Once);
+
         }
 
+        //-----------------START OF LONG VERSION----------------------------
+        /*
         [Fact]
         public async Task DeleteByIdAsync_WithProvidedId_ReturnRowsAffected()
         {
@@ -229,8 +304,35 @@ namespace Domain.UnitTests.Services
                 .Verify(descriptionsRepository => descriptionsRepository
                 .DeleteByIdAsync(deletedId), Times.Once);
 
+        }*/
+        //-----------------END OF LONG VERSION----------------------------
+
+        [Theory, AutoMoqData]
+        public async Task DeleteByIdAsync_WithProvidedId_ReturnRowsAffected(
+                int deletedId,
+                [Frozen] Mock<IRecipesRepository> receipesRepositoryMock,
+                [Frozen] Mock<IDescriptionsRepository> descriptionsRepositoryMock,
+                RecipeService sut)
+        {
+            //Arange - preparation of data, creation of mock data model objects
+
+            //Act - we call the method we want to test
+            await sut.DeleteByIdAsync(deletedId);
+
+            //Assert - did the required methods were called, did the intended data were returned
+
+            receipesRepositoryMock
+                .Verify(recipesRepository => recipesRepository
+                .DeleteByIdAsync(deletedId), Times.Once);
+
+            descriptionsRepositoryMock
+                .Verify(descriptionsRepository => descriptionsRepository
+                .DeleteByIdAsync(deletedId), Times.Once);
+
         }
 
+        //-----------------START OF LONG VERSION----------------------------
+        /*
         [Fact]
         public async Task DeleteAllAsync_WhenMethodCalled_ReturnRowsAffected()
         {
@@ -261,8 +363,31 @@ namespace Domain.UnitTests.Services
                 .Verify(descriptionsRepository => descriptionsRepository
                 .DeleteAllAsync(), Times.Once);
 
+        }*/
+        //-----------------END OF LONG VERSION----------------------------
+
+        [Theory, AutoMoqData]
+        public async Task DeleteAllAsync_WhenMethodCalled_ReturnRowsAffected(
+            [Frozen] Mock<IRecipesRepository> receipesRepositoryMock,
+                [Frozen] Mock<IDescriptionsRepository> descriptionsRepositoryMock,
+                RecipeService sut)
+        {
+            //Arange - preparation of data, creation of mock data model objects
+
+
+            //Act - we call the method we want to test
+            await sut.DeleteAllAsync();
+
+            //Assert - did the required methods were called, did the intended data were returned
+
+            receipesRepositoryMock
+                .Verify(recipesRepository => recipesRepository
+                .DeleteAllAsync(), Times.Once);
+
+            descriptionsRepositoryMock
+                .Verify(descriptionsRepository => descriptionsRepository
+                .DeleteAllAsync(), Times.Once);
+
         }
     }
-
-
 }

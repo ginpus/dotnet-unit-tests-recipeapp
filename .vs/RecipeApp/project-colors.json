@@ -20,7 +20,12 @@
       "ProjectGuid": "9a6730e3-ec6f-4824-9ee9-3ab540ffe24b",
       "DisplayName": "Contracts",
       "ColorIndex": 3
+    },
+    "89a2d877-dd3b-4d17-90aa-a70a420da619": {
+      "ProjectGuid": "89a2d877-dd3b-4d17-90aa-a70a420da619",
+      "DisplayName": "RecipeApp",
+      "ColorIndex": 4
     }
   },
-  "NextColorIndex": 4
+  "NextColorIndex": 5
 }

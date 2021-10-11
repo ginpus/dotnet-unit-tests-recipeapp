@@ -130,3 +130,13 @@ C:\Users\Administrator\Desktop\c#\csharp-unit-tests-receipeapp\RecipeApp\Domain.
 C:\Users\Administrator\Desktop\c#\csharp-unit-tests-receipeapp\RecipeApp\Domain.UnitTests\obj\Debug\net5.0\ref\Domain.UnitTests.dll
 C:\Users\Administrator\Desktop\c#\csharp-unit-tests-receipeapp\RecipeApp\Domain.UnitTests\obj\Debug\net5.0\Domain.UnitTests.pdb
 C:\Users\Administrator\Desktop\c#\csharp-unit-tests-receipeapp\RecipeApp\Domain.UnitTests\obj\Debug\net5.0\Domain.UnitTests.genruntimeconfig.cache
+C:\Users\Administrator\Desktop\c#\csharp-unit-tests-receipeapp\RecipeApp\Domain.UnitTests\bin\Debug\net5.0\TestHelpers.deps.json
+C:\Users\Administrator\Desktop\c#\csharp-unit-tests-receipeapp\RecipeApp\Domain.UnitTests\bin\Debug\net5.0\TestHelpers.runtimeconfig.json
+C:\Users\Administrator\Desktop\c#\csharp-unit-tests-receipeapp\RecipeApp\Domain.UnitTests\bin\Debug\net5.0\TestHelpers.runtimeconfig.dev.json
+C:\Users\Administrator\Desktop\c#\csharp-unit-tests-receipeapp\RecipeApp\Domain.UnitTests\bin\Debug\net5.0\AutoFixture.dll
+C:\Users\Administrator\Desktop\c#\csharp-unit-tests-receipeapp\RecipeApp\Domain.UnitTests\bin\Debug\net5.0\AutoFixture.AutoMoq.dll
+C:\Users\Administrator\Desktop\c#\csharp-unit-tests-receipeapp\RecipeApp\Domain.UnitTests\bin\Debug\net5.0\AutoFixture.Xunit2.dll
+C:\Users\Administrator\Desktop\c#\csharp-unit-tests-receipeapp\RecipeApp\Domain.UnitTests\bin\Debug\net5.0\Fare.dll
+C:\Users\Administrator\Desktop\c#\csharp-unit-tests-receipeapp\RecipeApp\Domain.UnitTests\bin\Debug\net5.0\FluentAssertions.dll
+C:\Users\Administrator\Desktop\c#\csharp-unit-tests-receipeapp\RecipeApp\Domain.UnitTests\bin\Debug\net5.0\TestHelpers.dll
+C:\Users\Administrator\Desktop\c#\csharp-unit-tests-receipeapp\RecipeApp\Domain.UnitTests\bin\Debug\net5.0\TestHelpers.pdb
